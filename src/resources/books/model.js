@@ -88,4 +88,42 @@ async function getAllBooks() {
   return getResult;
 }
 
-module.exports =  {Book, createBook, getAllBooks};
+async function getBookByID(bookId) {
+  const SQL = `SELECT * FROM books WHERE id=$1;`;
+
+  let getResult = {}
+
+  await db.query(SQL, [bookId])
+    .then(result => getResult = result.rows)
+    .catch(error => {
+      getResult = {
+        error: {
+          message: "DB error, could not fetch book with id=" + bookId.toString() + ": " + error.message,
+          code: error.code
+        }
+      }
+    });
+
+  return getResult;
+}
+
+async function getBooksByType(bookType) {
+  const SQL = `SELECT * FROM books WHERE LOWER(type)=$1;`;
+
+  let getResult = {}
+
+  await db.query(SQL, [bookType.toLowerCase()])
+    .then(result => getResult = result.rows)
+    .catch(error => {
+      getResult = {
+        error: {
+          message: "DB error, could not fetch books with type=" + bookType + ": " + error.message,
+          code: error.code
+        }
+      }
+    });
+
+  return getResult;
+}
+
+module.exports =  {Book, createBook, getAllBooks, getBookByID, getBooksByType};

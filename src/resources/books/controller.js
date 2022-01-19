@@ -54,4 +54,27 @@ async function getAll(req, res) {
   }
 }
 
-module.exports = {createOne, getAll}
+async function getOneById(req, res) {
+  const bookId = parseInt(req.params.id);
+  const result = await BookModel.getBookByID(bookId);
+  if(result.error !== undefined) {
+    res.status(500).send(result);
+  }
+  else {
+    res.json({data: result});
+  }
+}
+
+async function getFictionBooks(req, res) {
+  //const bookId = parseInt(req.params.id);
+  const result = await BookModel.getBooksByType('fiction');
+  if(result.error !== undefined) {
+    res.status(500).send(result);
+  }
+  else {
+    res.json({data: result});
+  }
+}
+
+
+module.exports = {createOne, getAll, getOneById, getFictionBooks}
