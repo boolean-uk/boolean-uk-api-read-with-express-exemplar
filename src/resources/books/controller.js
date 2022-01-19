@@ -70,8 +70,11 @@ async function getFictionBooks(req, res) {
   //const bookId = parseInt(req.params.id);
   let topic = ''
   if(req.query.topic !== undefined) {
-    topic = req.query.topic;
-    console.log("Also wanting by topic!", topic)
+    topic = req.query.topic.split("-").join(" ");
+    if(topic === "self help") {
+      topic = "self-help";
+    }
+    console.log("Fetching with topic:", topic);
   }
 
   const result = await BookModel.getBooksByType('fiction', topic);
@@ -82,6 +85,20 @@ async function getFictionBooks(req, res) {
     res.json({data: result});
   }
 }
+
+/* OTHER QUERIES
+
+
+/books/author/name-of-author?order=recent (recent first)
+  SELECT * FROM books WHERE author='Susanna Grant' ORDER BY publicationdate DESC;
+
+/books/author/name-of-author
+  SELECT * FROM books WHERE author='Susanna Grant';
+
+
+
+*/
+
 
 
 module.exports = {createOne, getAll, getOneById, getFictionBooks}
