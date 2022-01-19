@@ -107,17 +107,26 @@ async function getBookByID(bookId) {
   return getResult;
 }
 
-async function getBooksByType(bookType) {
-  const SQL = `SELECT * FROM books WHERE LOWER(type)=$1;`;
+async function getBooksByType(bookType, topic="") {
+  let SQL = `SELECT * FROM books WHERE LOWER(type)=$1;`;
+  const SQLWithTopic = `SELECT * FROM books WHERE LOWER(type)=$1 AND topic=$2;`;
+  let queryData = [bookType.toLowerCase()];
+  if(topic && topic.length > 0) {
+    SQL = SQLWithTopic;
+    queryData.push(topic.toLowerCase());
+  }
+
+  
 
   let getResult = {}
 
-  await db.query(SQL, [bookType.toLowerCase()])
+  await db.query(SQL, queryData)
     .then(result => getResult = result.rows)
     .catch(error => {
       getResult = {
         error: {
-          message: "DB error, could not fetch books with type=" + bookType + ": " + error.message,
+          message: "DB error, could not fetch books by type: " + error.message,
+          queryParams: queryData,
           code: error.code
         }
       }

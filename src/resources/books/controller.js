@@ -66,8 +66,15 @@ async function getOneById(req, res) {
 }
 
 async function getFictionBooks(req, res) {
+  console.log("Wanting fiction books")
   //const bookId = parseInt(req.params.id);
-  const result = await BookModel.getBooksByType('fiction');
+  let topic = ''
+  if(req.query.topic !== undefined) {
+    topic = req.query.topic;
+    console.log("Also wanting by topic!", topic)
+  }
+
+  const result = await BookModel.getBooksByType('fiction', topic);
   if(result.error !== undefined) {
     res.status(500).send(result);
   }
